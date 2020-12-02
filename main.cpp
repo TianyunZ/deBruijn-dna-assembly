@@ -1,25 +1,27 @@
-﻿// dna_assembly_zty.cpp
-//
+﻿// Main Method
+
 #include "debruijn.h"
-//#include "config.h"
 #include <iostream>
 #include <string>
 #pragma warning(disable:4996)
+
 using namespace std;
 
 int main()
 {
-	//vector<Genome> data = ReadFromFasta(shortPath1);
-	//vector<Genome> data2 = ReadFromFasta(shortPath2);
-	vector<Genome> data = ReadFromFasta(demoPath1);
-	vector<Genome> data2 = ReadFromFasta(demoPath2);
-	for (int i = 0; i < data2.size(); i++) {
-		data.push_back(data2[i].reverse().complement());
+	vector<Genome> fasta1 = ReadFromFasta(fastaPath1);
+	vector<Genome> fasta2 = ReadFromFasta(fastaPath2);
+
+  for (int i = 0; i < fasta2.size(); i++) {
+		fasta1.push_back(fasta2[i].reverse().complement());
 	}
-	cout << "Hello World!\n";
+
+  cout << "Hello World!\n";
 	DeBruijnGraph* G = new DeBruijnGraph();
-	G->CreateGraph(data);
+
+	G->CreateGraph(fasta1);
 	G->EulerianPath();
+
 	return 0;
 }
 

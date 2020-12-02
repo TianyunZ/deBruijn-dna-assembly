@@ -1,0 +1,40 @@
+/Users/juanes/.virtualenvs/jupyter/bin/quast.py -m 50 /Users/juanes/cornell/CS_5112/deBruijn-dna-assembly/outdir/demo_result.fasta
+
+Version: 5.0.2
+
+System information:
+  OS: macOS-10.14.6-x86_64-i386-64bit (macosx)
+  Python version: 3.8.6
+  CPUs number: 8
+
+Started: 2020-11-29 20:41:25
+
+Logging to /Users/juanes/cornell/CS_5112/deBruijn-dna-assembly/analyses/quast_results/results_2020_11_29_20_41_25/quast.log
+NOTICE: Maximum number of threads is set to 2 (use --threads option to set it manually)
+
+CWD: /Users/juanes/cornell/CS_5112/deBruijn-dna-assembly/analyses
+Main parameters: 
+  MODE: default, threads: 2, minimum contig length: 50, minimum alignment length: 65, \
+  ambiguity: one, threshold for extensive misassembly size: 1000
+
+Contigs:
+  Pre-processing...
+  /Users/juanes/cornell/CS_5112/deBruijn-dna-assembly/outdir/demo_result.fasta ==> demo_result
+
+module 'cgi' has no attribute 'escape'
+Traceback (most recent call last):
+  File "/Users/juanes/.virtualenvs/jupyter/bin/quast.py", line 307, in <module>
+    return_code = main(sys.argv[1:])
+  File "/Users/juanes/.virtualenvs/jupyter/bin/quast.py", line 148, in main
+    from quast_libs import basic_stats
+  File "/Users/juanes/.virtualenvs/jupyter/lib/python3.8/site-packages/quast_libs/basic_stats.py", line 15, in <module>
+    from quast_libs.circos import set_window_size
+  File "/Users/juanes/.virtualenvs/jupyter/lib/python3.8/site-packages/quast_libs/circos.py", line 25, in <module>
+    from quast_libs.icarus_utils import get_assemblies, check_misassembled_blocks, Alignment
+  File "/Users/juanes/.virtualenvs/jupyter/lib/python3.8/site-packages/quast_libs/icarus_utils.py", line 15, in <module>
+    from quast_libs.html_saver.html_saver import trim_ref_name
+  File "/Users/juanes/.virtualenvs/jupyter/lib/python3.8/site-packages/quast_libs/html_saver/html_saver.py", line 18, in <module>
+    from quast_libs.site_packages.jsontemplate import jsontemplate
+  File "/Users/juanes/.virtualenvs/jupyter/lib/python3.8/site-packages/quast_libs/site_packages/jsontemplate/jsontemplate.py", line 583, in <module>
+    'html': cgi.escape,
+AttributeError: module 'cgi' has no attribute 'escape'

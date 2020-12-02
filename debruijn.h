@@ -1,18 +1,21 @@
 #pragma once
+
 #ifndef DEBRUIJN_H_INCLUDED
 #define DEBRUIJN_H_INCLUDED
 #endif
+
 #include "genome.h"
 #include "config.h"
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>                                   
+#include <map>
 
 using namespace std;
 
 struct ArcNode;
 struct DBGEdge;
+
 struct DBGNode : Genome {
 	int id;
 	int in, out;
@@ -38,7 +41,7 @@ struct ArcNode {
 	bool removed;
 	ArcNode(DBGNode* n) {
 		node = n;
-		next = NULL; 
+		next = NULL;
 		visited = false;
 		repeat = 0;
 		removed = false;
@@ -62,22 +65,24 @@ struct DBGEdge {
 };
 
 struct DeBruijnGraph {  // adjacency list
-private:
-	//vector<DBGNode*> adjlist;
-	//map<DBGNode, int> nodes;
-	vector<DBGNode*> nodes;
-	map<Genome, int> IdTable;
-public:
-	DeBruijnGraph(){};
-	void CreateNode(vector<Genome>&);
-	void CreateGraph(vector<Genome>&);
-	void EulerianPath(); // Find and return Eulerian path or cycle (as appropriate)
-	vector<DBGNode*> FindFirstNode();
-	DBGNode* FindNode(Genome);
-	void AddEdge(DBGNode*, DBGNode*);
-	void DFSHelper(DBGNode*, vector<char>&, DBGNode*);
-	void WalkThroughBubble(DBGNode*, vector<DBGNode*>&);
-	void RemoveBubble();
+  private:
+    // vector<DBGNode*> adjlist;
+    // map<DBGNode, int> nodes;
+    vector<DBGNode*> nodes;
+    map<Genome, int> IdTable;
+  public:
+    DeBruijnGraph(){};
+    void CreateNode(vector<Genome>&);
+    void CreateGraph(vector<Genome>&);
+    void EulerianPath(); // Find and return Eulerian path or cycle (as appropriate)
+
+    vector<DBGNode*> FindFirstNode();
+    DBGNode* FindNode(Genome);
+
+    void AddEdge(DBGNode*, DBGNode*);
+    void DFSHelper(DBGNode*, vector<char>&, DBGNode*);
+    void WalkThroughBubble(DBGNode*, vector<DBGNode*>&);
+    void RemoveBubble();
 	~DeBruijnGraph() {};
 };
 
@@ -141,7 +146,7 @@ void DeBruijnGraph::DFSHelper(DBGNode* n, vector<char>& singleGenome, DBGNode* l
 }
 
 void DeBruijnGraph::EulerianPath() {
-	vector<vector<char>> resGenome;
+	vector<vector<char> > resGenome;
 	ArcNode* p;
 	DBGNode* t;
 	int n = 0;
@@ -205,7 +210,7 @@ void DeBruijnGraph::EulerianPath() {
 		//		}
 		//	}
 		//}
-		for (int m = 1; m < last->clip.length(); m++) {
+		for (int m = 1; m < last-> clip.length(); m++) {
 			singleGenome.push_back(last->clip[m]);
 		}
 		resGenome.push_back(singleGenome);
@@ -216,7 +221,7 @@ void DeBruijnGraph::EulerianPath() {
 	if (f != NULL)
 	{
 		int num = 0;
-		//fputs("Open File!\n", f);
+		// fputs("Open File!\n", f);
 		for (int i = 0; i < resGenome.size(); i++) {
 			if (resGenome[i].size() < minOutPutLength)
 				continue;
@@ -226,8 +231,8 @@ void DeBruijnGraph::EulerianPath() {
 			}
 			fprintf(f, "\n");
 		}
-		fclose(f);
 	}
+	fclose(f);
 }
 
 DBGNode* DeBruijnGraph::FindNode(Genome mer) {
@@ -248,12 +253,12 @@ void DeBruijnGraph::AddEdge(DBGNode* left, DBGNode* right) {
 	//left->firstarc = newArc;
 	//left->out++;
 	//right->in++;
-	left->to.push_back(right);
-	right->from.push_back(left);
-	left->toVisited.push_back(false);
-	right->fromVisited.push_back(false);
-	left->out++;
-	right->in++;
+	left -> to.push_back(right);
+	right -> from.push_back(left);
+	left -> toVisited.push_back(false);
+	right -> fromVisited.push_back(false);
+	left -> out++;
+	right -> in++;
 }
 
 void DeBruijnGraph::WalkThroughBubble(DBGNode* u, vector<DBGNode*>& path)

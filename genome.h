@@ -2,6 +2,7 @@
 #include<vector>
 #include<string>
 #pragma warning(disable:4996)
+
 using namespace std;
 
 char comp(char c)
@@ -46,7 +47,7 @@ int c2i(char c)
 	}
 }
 
-struct Genome {  // »ùÒò×éÆ¬¶Î
+struct Genome {
 	string clip;
 
 	vector<Genome> kmers();
@@ -101,6 +102,7 @@ Genome Genome::reverse()
 	std::reverse(t.clip.begin(), t.clip.end());
 	return t;
 }
+
 Genome Genome::complement()
 {
 	int l = this->clip.length();
@@ -137,6 +139,4 @@ vector<Genome> ReadFromFasta (string path){
 	return data;
 }
 
-void WriteToFasta() {
-
-}
+void WriteToFasta() {}
