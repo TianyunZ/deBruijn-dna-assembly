@@ -2,21 +2,20 @@
 #include<vector>
 #include<string>
 #pragma warning(disable:4996)
-
 using namespace std;
 
 char comp(char c)
 {
-    switch (c) {
-    case 'A':
-        return 'T';
-    case 'T':
-        return 'A';
-    case 'G':
-        return 'C';
-    case 'C':
-        return 'G';
-    }
+	switch (c) {
+	case 'A':
+		return 'T';
+	case 'T':
+		return 'A';
+	case 'G':
+		return 'C';
+	case 'C':
+		return 'G';
+	}
 }
 
 char i2c(int i)
@@ -47,7 +46,7 @@ int c2i(char c)
 	}
 }
 
-struct Genome {
+struct Genome {  // Genome fragment
 	string clip;
 
 	vector<Genome> kmers();
@@ -87,7 +86,7 @@ vector<Genome> Genome::kmers() {
 }
 
 Genome Genome::leftKm1mer() {
-	Genome* res = new Genome( clip.substr(0, clip.length() - 1) );
+	Genome* res = new Genome(clip.substr(0, clip.length() - 1));
 	return *res;
 }
 
@@ -102,7 +101,6 @@ Genome Genome::reverse()
 	std::reverse(t.clip.begin(), t.clip.end());
 	return t;
 }
-
 Genome Genome::complement()
 {
 	int l = this->clip.length();
@@ -124,19 +122,22 @@ vector<Genome> ExtendData(vector<Genome> g) {
 	return res;
 }
 
-vector<Genome> ReadFromFasta (string path){
+vector<Genome> ReadFromFasta(string path) {
 	vector<Genome> data;
 	printf("reading from %s\n", path.c_str());
 	auto f = fopen(path.c_str(), "r");
 	char s[222222];
 	while (fscanf(f, "%*s\n%s\n", s) != EOF) {
-		string str(s);
-		auto g = Genome(str);
+		// string str(s);
+		auto g = Genome(s);
 		data.push_back(g);
+		fscanf(f, "%*s\n%*s\n", s);
 	}
 	printf("%d genomes read from %s\n", (int)data.size(), path.c_str());
 	//vector<Genome> res = ExtendData(data);
 	return data;
 }
 
-void WriteToFasta() {}
+void WriteToFasta() {
+
+}
