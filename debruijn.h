@@ -96,7 +96,7 @@ public:
 	void DFSHelper(DBGNode*, vector<char>&);
 	//void DFSHelper(DBGNode*);
 	void WalkThroughBubble(DBGNode*, vector<DBGNode*>&);
-	void RemoveBubble();
+	void RemoveErrBranch();
 	void RemoveLoop(DBGNode*, DBGNode*, int);
 	~DeBruijnGraph() {};
 };
@@ -290,7 +290,7 @@ void DeBruijnGraph::WalkThroughBubble(DBGNode* u, vector<DBGNode*>& path)
 	}
 }
 
-void DeBruijnGraph::RemoveBubble()
+void DeBruijnGraph::RemoveErrBranch()
 {
 	int numBubble = 0;
 	for (auto&& u : nodes) {

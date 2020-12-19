@@ -17,7 +17,7 @@ int main()
 	cout << "Hello World! \n";
 	DeBruijnGraph* G = new DeBruijnGraph();
 	G->CreateGraph(data);
-	//G->RemoveBubble();
+	G->RemoveErrBranch();
 	G->EulerianPath();
 	return 0;
 }
