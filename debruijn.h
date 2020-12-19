@@ -17,19 +17,34 @@ struct DBGNode : Genome {
 	int id;
 	int in, out;
 	DBGNode* from[4], * to[4];
-	bool fromVisited[4], toVisited[4];
-	bool fromRemoved[4], toRemoved[4];
-	bool visited;
+	bool toVisited[4];
+	bool toRemoved[4];
+	bool toLoopVisited[4];
+	//bool visited;
 	int repeat;
-	bool removed;
+	//bool removed;
 	ArcNode* firstarc;  // Pointer to the first ArcNode
-	DBGNode() {};
-	DBGNode(Genome g) {
-		clip.assign(g.clip);
-		in = 0;
+	void init()
+	{
+		for (int i = 0; i < 4; ++i) {
+			from[i] = nullptr;
+			to[i] = nullptr;
+			toVisited[i] = false;
+			toLoopVisited[i] = false;
+			toRemoved[i] = false;
+		}
+		in = -1;
 		out = 0;
-		visited = false;
 		firstarc = NULL;
+		repeat = 0;
+
+	}
+	DBGNode() {
+		init();
+	};
+	DBGNode(Genome g) {
+		init();
+		clip.assign(g.clip);
 	};
 };
 
@@ -78,7 +93,7 @@ public:
 	vector<DBGNode*> FindFirstNode();
 	DBGNode* FindNode(Genome);
 	void AddEdge(DBGNode*, DBGNode*);
-	void DFSHelper(DBGNode*, vector<char>&, int);
+	void DFSHelper(DBGNode*, vector<char>&);
 	//void DFSHelper(DBGNode*);
 	void WalkThroughBubble(DBGNode*, vector<DBGNode*>&);
 	void RemoveBubble();
@@ -99,21 +114,22 @@ vector<DBGNode*> DeBruijnGraph::FindFirstNode() {
 }
 
 
-void DeBruijnGraph::DFSHelper(DBGNode* n, vector<char>& singleGenome, int index) {
+void DeBruijnGraph::DFSHelper(DBGNode* n, vector<char>& singleGenome) {
 	if (n == NULL) {
 		return;
 	}
 	int i = 0;
+
+	singleGenome.push_back(n->clip[0]);
 
 	for (i = 0; i < 4; i++) {
 		if (n->toRemoved[i]) {
 			continue;
 		}
 		if (!n->toVisited[i]) {
-			vector<char> tempGenome;
-			singleGenome.push_back(n->clip[0]);
+			//vector<char> tempGenome;
 			n->toVisited[i] = true;
-			DFSHelper(n->to[i], singleGenome, index + 1);
+			DFSHelper(n->to[i], singleGenome);
 		}
 		else if (n->out == 0) {
 			return;
@@ -138,8 +154,8 @@ void DeBruijnGraph::RemoveLoop(DBGNode* n, DBGNode* last, int index) {
 		if (n->toRemoved[i]) {
 			continue;
 		}
-		if (!n->toVisited[i]) {
-			n->toVisited[i] = true;
+		if (!n->toLoopVisited[i]) {
+			n->toLoopVisited[i] = true;
 			if (n->out > 1) {
 				last = n;
 				index = i;
@@ -151,6 +167,7 @@ void DeBruijnGraph::RemoveLoop(DBGNode* n, DBGNode* last, int index) {
 		else if (index > 0) {
 			//n->toRemoved[i] = true;
 			last->toRemoved[index] = true;
+			//cout << "removeLoop" << last->id <<  "branch" << index << endl;
 			//cout << "test" << endl;
 		}
 	}
@@ -168,10 +185,31 @@ void DeBruijnGraph::EulerianPath() {
 	for (int i = 0; i < head.size(); i++) {
 		vector<char> singleGenome;
 		last = head[i];
-		printf("RemoveLoop > %d \n", i);
+		//printf("RemoveLoop > %d \n", i);
 		RemoveLoop(head[i], last, 0);
 		//cout << "End Remove" << endl;
-		DFSHelper(head[i], singleGenome, 1);
+		DFSHelper(head[i], singleGenome);
+		//t = head[i];
+		//while (t != nullptr && t->out > 0) {
+		//	int flg = 0;
+		//	for (n = 0; n < 4; n++) {
+		//		if (t->to[n] == nullptr) {
+		//			flg++;
+		//			continue;
+		//		}
+		//		if (!t->toVisited[n] && !t->toRemoved[n]) {
+		//			singleGenome.push_back(t->clip[0]);
+		//			last = t;
+		//			t->toVisited[n] = true;
+		//			t = t->to[n];
+		//			break;
+		//		}
+		//	}
+		//	if (flg == 3) {
+		//		break;
+		//	}
+		//}
+
 		/*t = head[i];
 		while (t->to.size() > 0) {
 			for (n = 0; n < t->to.size(); n++) {
@@ -219,6 +257,7 @@ DBGNode* DeBruijnGraph::FindNode(Genome mer) {
 	if (iter == IdTable.end()) {
 		auto newNode = new DBGNode(mer);
 		newNode->id = nodes.size();
+		newNode->in = 0;
 		IdTable[mer] = newNode->id;
 		nodes.push_back(newNode);
 		return newNode;
@@ -232,12 +271,8 @@ DBGNode* DeBruijnGraph::FindNode(Genome mer) {
 void DeBruijnGraph::AddEdge(DBGNode* left, DBGNode* right) {
 	int l = c2i(left->clip[0]);
 	int r = c2i(right->clip[0]);
-	left->to[l] = right;
-	right->from[r] = left;
-	left->toVisited[l] = false;
-	right->fromVisited[r] = false;
-	left->toRemoved[l] = false;
-	right->fromRemoved[r] = false;
+	left->to[r] = right;
+	right->from[l] = left;
 	left->out++;
 	right->in++;
 }
@@ -264,7 +299,7 @@ void DeBruijnGraph::RemoveBubble()
 			for (int j = 0; j < 4; j++) {
 				DBGNode* x = u->to[i];
 				DBGNode* y = u->to[j];
-				if (x != y && x != NULL && y != NULL) {
+				if (x != y && x != nullptr && y != nullptr) {
 					if ((double)x->repeat / y->repeat < 0.7) {
 						vector<DBGNode*> xpath, ypath;
 						xpath.push_back(u);
