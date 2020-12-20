@@ -63,22 +63,6 @@ struct ArcNode {
 	};
 };
 
-struct DBGEdge {
-	DBGNode* node;
-	int cvg;
-	int leadToLoop;
-	bool visited;
-	bool removed;
-	DBGEdge(DBGNode* node = nullptr, int cvg = 0)
-		: node(node)
-		, cvg(cvg)
-	{
-		leadToLoop = 0;
-		visited = false;
-		removed = false;
-	}
-};
-
 struct DeBruijnGraph {  // adjacency list
 private:
 	//vector<DBGNode*> adjlist;
