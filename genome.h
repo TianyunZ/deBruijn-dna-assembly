@@ -18,20 +18,6 @@ char comp(char c)
 	}
 }
 
-char i2c(int i)
-{
-	switch (i) {
-	case 0:
-		return 'A';
-	case 1:
-		return 'T';
-	case 2:
-		return 'G';
-	case 3:
-		return 'C';
-	}
-}
-
 int c2i(char c)
 {
 	switch (c) {
@@ -60,18 +46,6 @@ struct Genome {  // Genome fragment
 		this->clip.assign(s);
 	}
 	~Genome() {};
-	bool operator<(const Genome g) const
-	{
-		return clip < g.clip;
-	}
-	char lastChar()
-	{
-		return clip[clip.length() - 1];
-	}
-	char firstChar()
-	{
-		return clip[0];
-	}
 };
 
 vector<Genome> Genome::kmers() {
@@ -114,13 +88,6 @@ Genome Genome::complement()
 	return t;
 }
 
-vector<Genome> ExtendData(vector<Genome> g) {
-	vector<Genome> res;
-	for (int i = 0; i < g.size(); i++) {
-		res.push_back(g[i].reverse().complement());
-	}
-	return res;
-}
 
 vector<Genome> ReadFromFasta(string path) {
 	vector<Genome> data;
@@ -134,10 +101,5 @@ vector<Genome> ReadFromFasta(string path) {
 		fscanf(f, "%*s\n%*s\n", s);
 	}
 	printf("%d genomes read from %s\n", (int)data.size(), path.c_str());
-	//vector<Genome> res = ExtendData(data);
 	return data;
-}
-
-void WriteToFasta() {
-
 }

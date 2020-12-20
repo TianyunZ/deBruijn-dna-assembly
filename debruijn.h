@@ -95,7 +95,7 @@ public:
 	void AddEdge(DBGNode*, DBGNode*);
 	void DFSHelper(DBGNode*, vector<char>&);
 	//void DFSHelper(DBGNode*);
-	void WalkThroughBubble(DBGNode*, vector<DBGNode*>&);
+	void WalkThroughBranch(DBGNode*, vector<DBGNode*>&);
 	void RemoveErrBranch();
 	void RemoveLoop(DBGNode*, DBGNode*, int);
 	~DeBruijnGraph() {};
@@ -134,13 +134,6 @@ void DeBruijnGraph::DFSHelper(DBGNode* n, vector<char>& singleGenome) {
 		else if (n->out == 0) {
 			return;
 		}
-		//else {
-		//	int size = singleGenome.size();
-		//	for (int j = index; j < size; j++) {
-		//		singleGenome.pop_back();
-		//	}
-		//	return;
-		//}
 	}
 }
 
@@ -209,22 +202,6 @@ void DeBruijnGraph::EulerianPath() {
 		//		break;
 		//	}
 		//}
-
-		/*t = head[i];
-		while (t->to.size() > 0) {
-			for (n = 0; n < t->to.size(); n++) {
-				if (!t->toVisited[n]) {
-					singleGenome.push_back(t->clip[0]);
-					last = t;
-					t->toVisited[n] = true;
-					t = t->to[n];
-					break;
-				}
-			}
-			if (n >= t->to.size()) {
-				break;
-			}
-		}*/
 		if (last != NULL) {
 			for (int m = 1; m < last->clip.length(); m++) {
 				singleGenome.push_back(last->clip[m]);
@@ -277,7 +254,7 @@ void DeBruijnGraph::AddEdge(DBGNode* left, DBGNode* right) {
 	right->in++;
 }
 
-void DeBruijnGraph::WalkThroughBubble(DBGNode* u, vector<DBGNode*>& path)
+void DeBruijnGraph::WalkThroughBranch(DBGNode* u, vector<DBGNode*>& path)
 {
 	ArcNode* p = u->firstarc;
 	while (u->out == 1) {
@@ -292,7 +269,7 @@ void DeBruijnGraph::WalkThroughBubble(DBGNode* u, vector<DBGNode*>& path)
 
 void DeBruijnGraph::RemoveErrBranch()
 {
-	int numBubble = 0;
+	int numBranch = 0;
 	for (auto&& u : nodes) {
 		ArcNode* x = u->firstarc;
 		for (int i = 0; i < 4; i++) {
@@ -300,31 +277,21 @@ void DeBruijnGraph::RemoveErrBranch()
 				DBGNode* x = u->to[i];
 				DBGNode* y = u->to[j];
 				if (x != y && x != nullptr && y != nullptr) {
-					if ((double)x->repeat / y->repeat < 0.7) {
+					if ((double)x->repeat / y->repeat < 0.6) {
 						vector<DBGNode*> xpath, ypath;
 						xpath.push_back(u);
 						ypath.push_back(u);
-						WalkThroughBubble(x, xpath);
-						WalkThroughBubble(y, ypath);
+						WalkThroughBranch(x, xpath);
+						WalkThroughBranch(y, ypath);
 
 						ArcNode* tgt_x = xpath.back()->firstarc;
 						ArcNode* tgt_y = ypath.back()->firstarc;
 
 						if (tgt_x != tgt_y || xpath.size() < k / 2) {
-							printf("Walk x, target at %d len = %d cvg = %d\n", tgt_x->node->id, (int)xpath.size(), x->repeat);
-							for (auto&& t : xpath) {
-								printf("%c", t->clip[0]);
-							}
-							puts("");
-							printf("Walk y, target at %d len = %d cvg = %d\n", tgt_y->node->id, (int)ypath.size(), y->repeat);
-							for (auto&& t : ypath) {
-								printf("%c", t->clip[0]);
-							}
-							puts("");
 							continue;
 						}
 
-						++numBubble;
+						++numBranch;
 
 						auto lst = xpath.back();
 						auto tgt = lst->firstarc->node;
@@ -340,7 +307,7 @@ void DeBruijnGraph::RemoveErrBranch()
 			}
 		}
 	}
-	printf("%d bubbles detected\n", numBubble);
+	printf("%d error branches detected\n", numBranch);
 }
 
 
