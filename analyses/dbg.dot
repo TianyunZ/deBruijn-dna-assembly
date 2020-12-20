@@ -1,0 +1,8 @@
+digraph "Graph" {
+  bgcolor="transparent";
+  GTACG [label="GTACG"] ;
+  TACGT [label="TACGT"] ;
+  ACGTA [label="ACGTA"] ;
+  CGTAC [label="CGTAC"] ;
+  TACGA [label="TACGA"] ;
+}
